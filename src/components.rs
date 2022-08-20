@@ -83,34 +83,27 @@ impl Block {
     }
 
     pub fn draw(&self) {
-        let colour: Color;
+        let colour: Color = match self.block_type {
 
-        match self.block_type {
-            BlockType::Regular => {
-                colour = match self.lives {
-                    3 => GREEN,
-                    2 => YELLOW,
-                    1 => RED,
-                    _ => DARKGRAY
-                };
+            BlockType::Regular => match self.lives {
+                3 => GREEN,
+                2 => YELLOW,
+                1 => RED,
+                _ => DARKGRAY
             }
 
-            BlockType::FreezePlayer => {
-                colour = match self.lives {
-                    3 => DARKBLUE,
-                    2 => BLUE,
-                    1 => Color::new(0.0, 1.0, 1.0, 1.0),
-                    _ => DARKGRAY
-                };
+            BlockType::FreezePlayer => match self.lives {
+                3 => DARKBLUE,
+                2 => BLUE,
+                1 => Color::new(0.0, 1.0, 1.0, 1.0),
+                _ => DARKGRAY
             }
 
-            _ => {
-                colour = match self.lives {
-                    3 => DARKGREEN,
-                    2 => ORANGE,
-                    1 => Color::new(0.5451, 0.0, 0.0, 1.00),
-                    _ => DARKGRAY
-                };
+            _ => match self.lives {
+                3 => DARKGREEN,
+                2 => ORANGE,
+                1 => Color::new(0.5451, 0.0, 0.0, 1.00),
+                _ => DARKGRAY
             }
 
         };
