@@ -6,6 +6,7 @@ use macroquad::prelude::*;
 fn create_game(
     score: &mut i32,
     player_lives: &mut i32,
+    player: &mut Player,
     blocks: &mut Vec<Block>,
     balls: &mut Vec<Ball>,
 ) {
@@ -13,6 +14,8 @@ fn create_game(
     let time = get_time();
 
     rand::srand((time * 10000000000000000f64 - time * 1000000000000000f64) as u64);
+
+    *player = Player::new();
 
     *player_lives = rand::gen_range(4, 7);
 
@@ -54,7 +57,7 @@ async fn main() {
     let mut blocks = Vec::new();
     let mut balls = Vec::new();
 
-    create_game(&mut score, &mut player_lives, &mut blocks, &mut balls);
+    create_game(&mut score, &mut player_lives, &mut player, &mut blocks, &mut balls);
 
     loop {
 
@@ -207,7 +210,7 @@ async fn main() {
                 if is_key_pressed(KeyCode::Space) {
                     game_state = GameState::Menu;
 
-                    create_game(&mut score, &mut player_lives, &mut blocks, &mut balls);
+                    create_game(&mut score, &mut player_lives, &mut player, &mut blocks, &mut balls);
 
                 }
             }
@@ -216,7 +219,7 @@ async fn main() {
                 if is_key_pressed(KeyCode::Space) {
                     game_state = GameState::Menu;
 
-                    create_game(&mut score, &mut player_lives, &mut blocks, &mut balls);
+                    create_game(&mut score, &mut player_lives, &mut player, &mut blocks, &mut balls);
                 }
             }
         }

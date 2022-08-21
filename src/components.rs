@@ -2,6 +2,9 @@ use std::f32::consts::PI;
 use macroquad::prelude::*;
 
 const DEG_TO_RAD: f32 = PI/180f32;
+const ICE: Color = Color::new(0.31, 0.34, 0.4, 1.0);
+const LIGHTBLUE: Color = Color::new(0.0, 1.0, 1.0, 1.0);
+const DARKRED: Color = Color::new(0.5451, 0.0, 0.0, 1.00);
 
 pub struct Ball {
     pub circle: Circle,
@@ -98,14 +101,14 @@ impl Block {
             BlockType::FreezePlayer => match self.lives {
                 3 => DARKBLUE,
                 2 => BLUE,
-                1 => Color::new(0.0, 1.0, 1.0, 1.0),
+                1 => LIGHTBLUE,
                 _ => DARKGRAY
             }
 
             _ => match self.lives {
                 3 => DARKGREEN,
                 2 => ORANGE,
-                1 => Color::new(0.5451, 0.0, 0.0, 1.00),
+                1 => DARKRED,
                 _ => DARKGRAY
             }
 
@@ -118,6 +121,7 @@ impl Block {
 pub struct Player {
     pub rect: Rect,
     pub player_size: Vec2,
+    pub colour: Color,
     player_speed: f32,
 }
 
@@ -132,6 +136,7 @@ impl Player {
                 player_size.x,
                 player_size.y
             ),
+            colour: BLACK,
             player_size,
             player_speed,
         }
@@ -142,9 +147,12 @@ impl Player {
         let now = &(miniquad::date::now() * 1000f64);
 
         if now < frozen {
-            draw_title_text("Frozen", font, BLUE);
+            draw_title_text("Frozen", font, ICE);
+            self.colour = ICE;
             return;
         }
+
+        self.colour = BLACK;
 
         let x_move = match (
             is_key_down(KeyCode::A) || is_key_down(KeyCode::Left),
@@ -165,7 +173,7 @@ impl Player {
     }
 
     pub fn draw(&self) {
-        draw_rectangle(self.rect.x, self.rect.y, self.rect.w, self.rect.h, BLACK);
+        draw_rectangle(self.rect.x, self.rect.y, self.rect.w, self.rect.h, self.colour);
     }
 }
 
