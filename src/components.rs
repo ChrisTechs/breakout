@@ -1,4 +1,7 @@
+use std::f32::consts::PI;
 use macroquad::prelude::*;
+
+const DEG_TO_RAD: f32 = PI/180f32;
 
 pub struct Ball {
     pub circle: Circle,
@@ -9,8 +12,8 @@ pub struct Ball {
 
 impl Ball {
     pub fn new(pos: Vec2) -> Self {
-        let ball_radius = (screen_width() * 0.04f32 + screen_height() * 0.04f32)/2f32;
-        let ball_speed = screen_height() * 0.76;
+        let ball_radius = (screen_width() + screen_height()) * 0.02f32;
+        let ball_speed = screen_height() * 0.84;
 
         Self {
             circle: Circle::new(pos.x, pos.y, ball_radius),
@@ -121,7 +124,7 @@ pub struct Player {
 impl Player {
     pub fn new() -> Self {
         let player_size = vec2(screen_width() / 100f32 * 15f32, screen_height() / 100f32 * 5f32);
-        let player_speed = screen_width();
+        let player_speed = screen_width() * 0.95;
         Self {
             rect: Rect::new(
                 screen_width() * 0.5f32 - player_size.x * 0.5f32,
@@ -183,22 +186,31 @@ pub fn resolve_collision(ball: &mut Circle, vel: &mut Vec2, object: &Rect) -> bo
         None => return false,
     };
 
-    let a_centre = ball.point();
-    let b_centre = object.point() + object.size() * 0.5f32;
-    let to = b_centre - a_centre;
-    let to_signum = to.signum();
+    let object_centre = object.point() + object.size() * 0.5f32;
+
+    let ball_centre = ball.point();
+
+    let signum = (object_centre - ball_centre).signum();
+
+    if vel.y > 0.8 {
+        if ball_centre.x < object_centre.x {
+            rotate(vel, 15f32 * DEG_TO_RAD);
+        }else {
+            rotate(vel, -15f32 * DEG_TO_RAD);
+        };
+    }
 
     match intersection.w > intersection.h {
         true => {
-            ball.y -= to_signum.y * intersection.h;
-            match to_signum.y > 0f32 {
+            ball.y -= signum.y * intersection.h;
+            match signum.y > 0f32 {
                 true => vel.y = -vel.y.abs(),
                 false => vel.y = vel.y.abs(),
             }
         }
         false => {
-            ball.x -= to_signum.x * intersection.w;
-            match to_signum.x < 0f32 {
+            ball.x -= signum.x * intersection.w;
+            match signum.x < 0f32 {
                 true => vel.x = vel.x.abs(),
                 false => vel.x = -vel.x.abs(),
             }
@@ -206,6 +218,13 @@ pub fn resolve_collision(ball: &mut Circle, vel: &mut Vec2, object: &Rect) -> bo
     }
 
     true
+}
+
+fn rotate(vec: &mut Vec2, radians: f32) {
+    let c_ang = radians.cos();
+    let s_ang = radians.sin();
+
+    *vec = vec2(c_ang*vec.x - s_ang*vec.y, s_ang*vec.x + c_ang*vec.y).normalize();
 }
 
 pub fn draw_title_text(text: &str, font: Font, colour: Color) {
