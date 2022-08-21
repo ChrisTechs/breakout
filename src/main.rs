@@ -1,10 +1,7 @@
 mod components;
 
-use components::{Ball, Block, Player, GameState, resolve_collision, draw_title_text};
-
+use components::{Ball, Block, Player, GameState, BlockType, resolve_collision, draw_title_text};
 use macroquad::prelude::*;
-use crate::components::BlockType;
-use crate::rand::srand;
 
 fn create_game(
     score: &mut i32,
@@ -15,7 +12,7 @@ fn create_game(
 
     let time = get_time();
 
-    srand((time * 10000000000000000f64 - time * 1000000000000000f64) as u64);
+    rand::srand((time * 10000000000000000f64 - time * 1000000000000000f64) as u64);
 
     *player_lives = rand::gen_range(4, 7);
 
